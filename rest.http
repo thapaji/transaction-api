@@ -1,9 +1,9 @@
 #### Get list from server
-GET http://localhost:8000/api/v1/tasks
+GET http://localhost:8000/api/v1/users
 
 
 #### POST data to server
-POST  http://localhost:8000/api/v1/tasks
+POST  http://localhost:8000/api/v1/tasks 
 #header of the request
 Content-Type: application/json
 
