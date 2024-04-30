@@ -3,7 +3,7 @@ import UserSchema from "./UserSchema.js";
 /*CREATE*/
 export const insertUser = (user) => {
     console.log(user)
-    return BucListSchema(user).save();
+    return UserSchema(user).save();
 }
 
 /*READ*/

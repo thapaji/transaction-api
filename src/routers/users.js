@@ -1,5 +1,6 @@
 import express from 'express'
 import { insertUser, getUsers, updateUser, deleteUser } from '../model/user/UserModel.js'
+import { hashPassword } from '../utils/bcryptjs.js';
 
 const router = express.Router()
 
@@ -17,6 +18,7 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
     // console.log(req.body)
     try {
+        req.body.password = hashPassword(req.body.password);
         const result = await insertUser(req.body);
         // console.log(result);
         result?._id
@@ -30,9 +32,14 @@ router.post("/", async (req, res) => {
             });
     } catch (error) {
         console.log(error)
-        res.status(500).json({
+        let code = 500;
+        if (error.message.includes('E11000 duplicate key error')) {
+            code = 200;
+            error.message = 'There is already another account associated to this email. Use different email to sign up.'
+        }
+        res.status(code).json({
             status: "error",
-            message: "Something went wrong in server. Please contact the provider.",
+            message: error.message,
         });
     }
 });
