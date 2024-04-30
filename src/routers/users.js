@@ -1,6 +1,6 @@
 import express from 'express'
-import { insertUser, getUsers, updateUser, deleteUser } from '../model/user/UserModel.js'
-import { hashPassword } from '../utils/bcryptjs.js';
+import { insertUser, getUsers, updateUser, deleteUser, getUserByEmail } from '../model/user/UserModel.js'
+import { comparePassword, hashPassword } from '../utils/bcryptjs.js';
 
 const router = express.Router()
 
@@ -44,6 +44,36 @@ router.post("/", async (req, res) => {
     }
 });
 
+/* POST*/
+router.post("/login", async (req, res) => {
+    // console.log(req.body)
+    try {
+        const user = await getUserByEmail(req.body.email);
+        // console.log(result);
+        if (user?._id) {
+            const isMatch = comparePassword(req.body.password, user.password);
+            if (isMatch) {
+                user.password = undefined;
+                return res.json({
+                    status: 'success',
+                    message: 'Login Successfull!!!!',
+                    user
+                })
+            }
+            return res.json({
+                status: 'error',
+                message: 'Invalid Credential!!!!'
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            status: "error",
+            message: error.message,
+        });
+    }
+});
+
 /*update task*/
 router.patch("/", async (req, res) => {
     try {
@@ -59,7 +89,6 @@ router.patch("/", async (req, res) => {
                 message: "Your user could not be updated",
             });
     } catch (error) {
-        console.log(error)
         res.status(500).json({
             status: "error",
             message: "Something went wrong in server. Please contact the provider.",

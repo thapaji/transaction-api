@@ -7,6 +7,11 @@ export const insertUser = (user) => {
 }
 
 /*READ*/
+export const getUserByEmail = (email) => {
+    console.log(email)
+    return UserSchema.findOne({ email });
+}
+
 export const getUsers = () => {
     return UserSchema.find();
 }
