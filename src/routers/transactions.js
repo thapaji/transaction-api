@@ -1,14 +1,16 @@
 import express from 'express'
-import { getTransactions, insertTransaction, updateTransaction, deleteTransaction } from '../model/transcation/TransactionModel.js'
+import { insertTransaction, updateTransaction, deleteTransaction, getTransactionsByUserId } from '../model/transcation/TransactionModel.js'
 const router = express.Router()
 
 /* GET*/
 router.get("/", async (req, res) => {
     try {
-        const result = await getTransactions();
+        const {authorization} = req.headers;
+        const result = (await getTransactionsByUserId(authorization) )?? [];
         console.log(result);
         res.json({
-            message: "User List read",
+            status: 'success',
+            message: "Transaction List read",
             data: result,
         });
     } catch (error) {
@@ -22,8 +24,10 @@ router.get("/", async (req, res) => {
 /* POST*/
 router.post("/", async (req, res) => {
     // console.log(req.body)
+
     try {
-        const result = await insertTransaction(req.body);
+        const { authorization } = req.headers;
+        const result = await insertTransaction({ ...req.body, userId: authorization });
         // console.log(result);
         result?._id
             ? res.json({
@@ -35,6 +39,7 @@ router.post("/", async (req, res) => {
                 message: "Transaction Addition Failed",
             });
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             status: "error",
             message: error.message,

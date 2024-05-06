@@ -3,7 +3,7 @@ import TransactionSchema from "./TransactionSchema.js";
 /*CREATE*/
 export const insertTransaction = (transaction) => {
     console.log(transaction)
-    return TransactionSchema(user).save();
+    return TransactionSchema(transaction).save();
 }
 
 /*READ*/
@@ -12,7 +12,7 @@ export const getTransactions = () => {
 }
 
 export const getTransactionsByUserId = (userId) => {
-    return TransactionSchema.find({ userId });
+    return !userId ? null : TransactionSchema.find({ userId });
 }
 
 /*UPDATE*/
