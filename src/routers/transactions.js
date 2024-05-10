@@ -1,12 +1,12 @@
 import express from 'express'
-import { insertTransaction, updateTransaction, deleteTransaction, getTransactionsByUserId } from '../model/transcation/TransactionModel.js'
+import { insertTransaction, updateTransaction, getTransactionsByUserId, deleteUserTransaction } from '../model/transcation/TransactionModel.js'
 const router = express.Router()
 
 /* GET*/
 router.get("/", async (req, res) => {
     try {
-        const {authorization} = req.headers;
-        const result = (await getTransactionsByUserId(authorization) )?? [];
+        const { authorization } = req.headers;
+        const result = (await getTransactionsByUserId(authorization)) ?? [];
         console.log(result);
         res.json({
             status: 'success',
@@ -69,21 +69,23 @@ router.patch("/", async (req, res) => {
     }
 });
 
-/*delete task*/
+/*delete transactions*/
 router.delete("/", async (req, res) => {
     try {
-        console.log(req.body);
-        const { ids } = req.body;
-        const result = await deleteTransaction(ids);
-        console.log(result);
+        // console.log(req.body);
+        const { authorization } = req.headers;
+        console.log(authorization)
+        console.log(req.body)
+        const result = await deleteUserTransaction(authorization, req.body);
+        // console.log(result);
         result?.acknowledged
             ? res.json({
                 status: "success",
-                message: "Your User has been deleted",
+                message: "Your Transactions has been deleted",
             })
             : res.json({
                 status: "error",
-                message: "Your User could not be deleted",
+                message: "Your Transactions could not be deleted",
             });
     } catch (error) {
         res.status(500).json({

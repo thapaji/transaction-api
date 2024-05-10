@@ -25,3 +25,11 @@ export const updateTransaction = (_id, transaction) => {
 export const deleteTransaction = (ids) => {
     return TransactionSchema.deleteMany({ _id: { $in: ids } });
 }
+
+export const deleteUserTransaction = ( userId, idsToDelete ) => {
+    return !userId
+        ? null
+        : TransactionSchema.deleteMany({
+            _id: { $in: idsToDelete },
+        });
+}
