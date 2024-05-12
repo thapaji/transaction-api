@@ -1,13 +1,24 @@
 import express from 'express'
-import { insertTransaction, updateTransaction, getTransactionsByUserId, deleteUserTransaction } from '../model/transcation/TransactionModel.js'
+import { insertTransaction, updateTransaction, getTransactionsByUserId, getTransactionsBetweenDates, deleteUserTransaction } from '../model/transcation/TransactionModel.js'
 const router = express.Router()
 
 /* GET*/
 router.get("/", async (req, res) => {
     try {
-        const { authorization } = req.headers;
-        const result = (await getTransactionsByUserId(authorization)) ?? [];
-        console.log(result);
+        console.log(req.headers)
+        const { authorization, fromdate, todate } = req.headers;
+        let result;
+
+        if (fromdate && todate) {
+            result = await getTransactionsBetweenDates(authorization, fromdate, todate);
+        } else {
+
+            result = await getTransactionsByUserId(authorization);
+        }
+
+        if (!result) {
+            result = [];
+        }
         res.json({
             status: 'success',
             message: "Transaction List read",

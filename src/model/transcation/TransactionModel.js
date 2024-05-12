@@ -12,7 +12,14 @@ export const getTransactions = () => {
 }
 
 export const getTransactionsByUserId = (userId) => {
-    return !userId ? null : TransactionSchema.find({ userId });
+    return !userId ? null : TransactionSchema.find({ userId }).sort({ date: 1 });
+}
+
+export const getTransactionsBetweenDates = (userId, startDate, endDate) => {
+    return !userId || !startDate || !endDate ? null : TransactionSchema.find({
+        userId: userId,
+        date: { $gte: startDate, $lte: endDate }
+    }).sort({ date: 1 });
 }
 
 /*UPDATE*/
@@ -26,7 +33,7 @@ export const deleteTransaction = (ids) => {
     return TransactionSchema.deleteMany({ _id: { $in: ids } });
 }
 
-export const deleteUserTransaction = ( userId, idsToDelete ) => {
+export const deleteUserTransaction = (userId, idsToDelete) => {
     return !userId
         ? null
         : TransactionSchema.deleteMany({
